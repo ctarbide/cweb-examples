@@ -33,14 +33,24 @@ by this \.{CWEB} program \.{wc.w}:
 @c
 @<Header files to include@>@/
 @<Global variables@>@/
+@<Prototypes@>@/
 @<Functions@>@/
 @<The main program@>
+
+@
+@<Prototypes@>=
+void wc_print(char *which, long char_count, long word_count,
+  long line_count);
 
 @ We must include the standard I/O definitions, since we want to send
 formatted output to |stdout| and |stderr|.
 
 @<Header files...@>=
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 @  The |status| variable will tell the operating system if the run was
 successful or not, and |prog_name| is used in case there's an error message to
@@ -56,10 +66,11 @@ char *prog_name; /* who we are */
 
 @ Now we come to the general layout of the |main| function. 
 
+@ Argument |argc| is the number of arguments on the \UNIX/ command line and
+|argv| are the arguments themselves, an array of strings.
+
 @<The main...@>=
-main (argc,argv)
-    int argc; /* the number of arguments on the \UNIX/ command line */
-    char **argv; /* the arguments themselves, an array of strings */
+int main (int argc, char **argv)
 {
   @<Variables local to |main|@>@;
   prog_name=argv[0];
@@ -224,10 +235,12 @@ the user about proper usage of the command. Counts are printed in
 
 @d print_count(n) printf("%8ld",n)
 
+@ Argument |which| tells which counts to print and |char_count|, |word_count|,
+|line_count| are the given totals.
+
 @<Fun...@>=
-wc_print(which, char_count, word_count, line_count)
-char *which; /* which counts to print */
-long char_count, word_count, line_count; /* given totals */
+void wc_print(char *which, long char_count,
+  long word_count, long line_count)
 {
   while (*which) 
     switch (*which++) {
